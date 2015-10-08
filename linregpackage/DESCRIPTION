@@ -1,0 +1,11 @@
+Package: linregpackage
+Type: Package
+Title: This package handles linear regression models
+Version: 0.0.0.9000
+Date: 2015-09-09
+Author: Camilla Skoglund and Amar Zhra and TrungNT
+Maintainer: Camilla Skoglund <camgu844@student.liu.se>
+Description: This package includes the code for a multiple regression model.
+License: GPL-2
+Suggests: ggplot2, testthat, knitr, rmarkdown
+VignetteBuilder: knitr

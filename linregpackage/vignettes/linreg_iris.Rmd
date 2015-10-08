@@ -1,0 +1,47 @@
+---
+title: "Workflow for linreg"
+author: "Trung and Camilia"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+### 1. Load library and dataset
+```{r}
+library(linregpackage)
+library(ggplot2)
+
+data(iris)
+attach(iris)
+head(iris, 5)
+```
+
+### 2. Create formula and fitting the model
+```{r}
+formula = Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width
+m = linreg(formula, iris)
+summary(m)
+```
+The model is fitted and we can see the summary about coefficients.
+
+### 3. Plot the model
+```{r fig.width = 6, fig.height = 3, fig.align='center'}
+plot(m)
+```
+
+### 4. Inspect the residuals, and predictions
+
+First the residuals:
+
+```{r}
+summary(residuals(m))
+```
+
+Next, the predictions:
+
+```{r}
+summary(predict(m))
+```
