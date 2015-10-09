@@ -4,6 +4,9 @@
 #' @param data data frame, dataset attached to the algorithm
 #' @return ridgereg object.
 #' @examples 
+#' formula <- Sepal.Length ~ Sepal.Width + Petal.Length
+#' data <- iris 
+#' ret <- ridgereg(Sepal.Length ~ Sepal.Width + Petal.Length, iris)
 
 ridgereg <- function(formula, data) {
   stopifnot((class(formula)=="formula") && (class(data)=="data.frame"))
@@ -25,7 +28,8 @@ ridgereg <- function(formula, data) {
   }
   
   #calculates regression coefficients:
-  del_a <- (t(X) %*% X) + (lambda %*% I)  # what is lambda and I?????????
+  lambda <- 1 #to test that the function works, later this line should not be included
+  del_a <- (t(X) %*% X) + (lambda * diag(n_cov))  # lambda is unknown!
   reg_coef <- solve(del_a) %*% t(X) %*% y
   
   #calculates the fitted values:
@@ -33,8 +37,11 @@ ridgereg <- function(formula, data) {
   
   ret <- list()
   class(ret) <- "ridgereg"
-  ret$reg_coef <- reg_coef
+  ret$reg_coef <- t(reg_coef)
   ret$fitted_values <- fitted_values
+  ret$formula <- formula
+  ret$data <- data
+  ret$data_name <- deparse(substitute(data))
   
   return(ret)
 
