@@ -18,6 +18,8 @@ ridgereg object.
 A function for ridge regression.
 }
 \examples{
-will come soon
+formula <- Sepal.Length ~ Sepal.Width + Petal.Length
+data <- iris
+ret <- ridgereg(Sepal.Length ~ Sepal.Width + Petal.Length, iris)
 }
 
