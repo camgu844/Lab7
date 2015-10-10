@@ -8,7 +8,7 @@
 #' data <- iris 
 #' ret <- ridgereg(Sepal.Length ~ Sepal.Width + Petal.Length, iris)
 
-ridgereg <- function(formula, data) {
+ridgereg <- function(formula, data, lambda) {
   stopifnot((class(formula)=="formula") && (class(data)=="data.frame"))
  
   # Uses model.matrix and all.vars on data and formula and then normalizes all covariates
@@ -28,8 +28,7 @@ ridgereg <- function(formula, data) {
   }
   
   #calculates regression coefficients:
-  lambda <- 1 #to test that the function works, later this line should not be included
-  del_a <- (t(X) %*% X) + (lambda * diag(n_cov))  # lambda is unknown!
+  del_a <- (t(X) %*% X) + (lambda * diag(n_cov))  
   reg_coef <- solve(del_a) %*% t(X) %*% y
   
   #calculates the fitted values:
@@ -42,6 +41,7 @@ ridgereg <- function(formula, data) {
   ret$formula <- formula
   ret$data <- data
   ret$data_name <- deparse(substitute(data))
+  ret$lambda <- lambda
   
   return(ret)
 

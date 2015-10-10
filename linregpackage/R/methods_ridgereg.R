@@ -3,8 +3,9 @@
 #' @param x ridgereg object
 print.ridgereg <- function(x) {
   data_name <- x$data_name
+  lambda <- x$lambda
   cat("Call:\n")
-  cat(paste("ridgereg(formula = ", deparse(x$formula), ", data = ", data_name, ")\n")) #how to show the data_name, in this case "iris"????
+  cat(paste("ridgereg(formula = ", deparse(x$formula), ", data = ", data_name, ", ", lambda,")\n")) 
   cat("\nCoefficients:\n")
   print(x$reg_coef)
 }
