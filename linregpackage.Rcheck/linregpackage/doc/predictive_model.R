@@ -1,16 +1,4 @@
----
-title: "Predictive model using ridgereg"
-author: "Trung and Camilia"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
----
-
-### 1. Load library and dataset
-```{r}
+## ------------------------------------------------------------------------
 library(linregpackage)
 library(mlbench)
 library(caret)
@@ -18,9 +6,8 @@ library(caret)
 data(BostonHousing)
 attach(BostonHousing)
 head(BostonHousing, 5)
-```
-Then, we split the dataset:
-```{r}
+
+## ------------------------------------------------------------------------
 # Rule of thumb: 60% for training, 40% for testing
 index <- 1:nrow(BostonHousing)
 set.seed(12082518)
@@ -29,35 +16,18 @@ trainset <- BostonHousing[ inTraining,]
 testset  <- BostonHousing[-inTraining,]
 print(nrow(trainset))
 print(nrow(testset))
-```
 
-### 2. Fit a linear regression model and a fit a linear regression model with forward selection of covariates on the training dataset.
-First simple overfitted linear model:
-```{r}
+## ------------------------------------------------------------------------
 lmfit <- train(medv ~ ., data = trainset, 
                method = "lm")
 print(lmfit)
-```
-Next, the model using forward selection:
-```{r}
+
+## ------------------------------------------------------------------------
 lmforward = train(medv ~ ., data = trainset,
                  method = "leapForward")
 print(lmforward)
-```
-We can see that with _lmfit_ the model provide better fitting, but with high number of parameters, this model will have low generalization ability and overfitting training data. 
 
-Conversely, _lmforward_ selected 4 parameters give reasonable good RMSE, which is **5.097917**. From this point of view, 9 more parameters included in _lmfit_ may only explained **0.072** RMSE value.
-
-We can calculate Adjusted $R^2$ to make selection between 2 model, given by formula:
-\[
-  AdjR^2 = 1-\frac{SS_{residuals}/(n-K)}{SS_{total}/(n-1)}
-\]
-Which clearly show that _lmforward_ is better choice.
-
-### 3. Fit a ridge regression model using your ridgereg() function to the training dataset for diffrent values of $\lambda$.
-
-Hello
-```{r}
+## ------------------------------------------------------------------------
 modelinfo = list(
   library=c('linregpackage'),
   type=c("Regression"),
@@ -87,14 +57,8 @@ lmridge = train(medv ~ ., data = trainset,
                 trControl=fitControl)
 print(lmridge)
 
-```
-Without crossvalidation, the model with $\lambda=0$ will give the best RMSE, however, _caret_ with a strategy of tuning parameter selects $\lambda=0.05$ as the best option.
 
-It is reasonable value, since too big $\lambda$ can make the model underfit, and smaller $\lambda$ will overfit the training data.
-
-### 4. Comparison of 3 models 
-
-```{r fig.width = 6, fig.height = 7, fig.align='center'}
+## ----fig.width = 6, fig.height = 7, fig.align='center'-------------------
 pfit = predict(lmfit, testset)
 pforward = predict(lmforward, testset)
 pridge = predict(lmridge, testset)
@@ -104,13 +68,9 @@ plot(pfit,type='l',col='blue',main="LMFIT Prediction")
 plot(pforward,type='l',col='blue',main="LMFORWARD Prediction")
 plot(pridge,type='l',col='blue',main="LMRIDGE Prediction")
 plot(actual, type='l', col='red',main="Actual value")
-```
-By visualization, we can see all 3 models provide pretty similar prediction and the line shape is identical to the actual shape.
 
-Conversele, the RMSE can give more clearly results:
-```{r}
+## ------------------------------------------------------------------------
 print(paste('RMSE lmfit:', sqrt(sum((actual-pfit)^2)/length(actual)) ))
 print(paste('RMSE lmforward:', sqrt(sum((actual-pforward)^2)/length(actual)) ))
 print(paste('RMSE ridge:', sqrt(sum((actual-pridge)^2)/length(actual)) ))
-```
-From this point of view, _lmfit_, a model with full 14 parameters give the best fit. The result seem to be inplausible, since a big model gives very poor generalization. However, the result on testset can be considered as reliable and this is a **helpful** model.
+

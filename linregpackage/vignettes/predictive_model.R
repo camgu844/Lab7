@@ -35,19 +35,19 @@ modelinfo = list(
                         class = c("numeric"),
                         label = c("Lambda")),
   fit=function(x, y, wts, param, lev, last, weights, classProbs, ...){
-    print(y)
-    return (ridgereg(y~x, data=NULL, param))
+    fitted= (ridgereg(y~x, data=NULL, param))
+    return(fitted)
   },
   predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
-    return (predict(modelFit, newdata))
+    predictions = predict(modelFit, newdata)
+    return(predictions)
   },
   grid=function(x, y, len = NULL, search = "grid"){
-    return (data.frame(lambda=1:10/10))
+    return (data.frame(lambda=seq(0,1000,20)/1000))
   },
   prob=NULL
 )
-# lmridge = train(medv ~ ., data = trainset, method = modelinfo)
-# m = ridgereg(formula, iris, lambda=0.1)
+lmridge = train(medv ~ ., data = trainset, method = modelinfo)
 # par(mfrow=c(2,1))
 # plot(predict(m),type='l',col='blue',main="Prediction")
 # plot(iris$Sepal.Length,type='l', col='red',main="Actual value")

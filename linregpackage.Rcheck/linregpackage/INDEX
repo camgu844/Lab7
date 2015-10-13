@@ -1,0 +1,24 @@
+as.data.frame.linreg    A function that creates a data frame from an
+                        object of class linreg.
+coef.linreg             A method that returns the coefficients as a
+                        named vector.
+coef.ridgereg           A method that returns the coefficients.
+linreg                  Multiple Linear Regression.
+linregpackage-package   This package handles linear regression models
+plot.linreg             The plot-method that creates two plots.
+predict.linreg          A method that returns the predicted values y.
+predict.ridgereg        A method that returns the predicted values y.
+print.linreg            Method for printing the coefficients and
+                        coefficient names.
+print.linreg_summary    Method for printing a summary of the results
+                        from the linreg function.
+print.ridgereg          A method for printing objects of class
+                        ridgereg.
+residuals.linreg        A method that returns the vector of residuals
+                        e.
+ridgereg                A function for ridge regression.
+summary.linreg          A method that creates a summary of the
+                        linreg-function.
+visualize_airport_delays
+                        A function that creates a plot showing mean
+                        delay of flights.
