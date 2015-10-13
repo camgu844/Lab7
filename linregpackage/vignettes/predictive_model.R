@@ -35,6 +35,7 @@ modelinfo = list(
                         class = c("numeric"),
                         label = c("Lambda")),
   fit=function(x, y, wts, param, lev, last, weights, classProbs, ...){
+    print(y)
     return (ridgereg(y~x, data=NULL, param))
   },
   predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){

@@ -23,7 +23,11 @@ coef.ridgereg <- function(x){
 #' @param x ridgereg object
 #' @return vector of predictions.
 predict.ridgereg <- function(x, newdata=NULL){
-  if (!is.null(newdata))
-    return(as.vector(rowSums(x$reg_coef * newdata)))
+  coefs = x$reg_coef
+  if (!is.null(newdata)){
+    if(length(x$reg_coef) != ncol(newdata))
+      newdata = cbind(1,newdata)
+    return(as.vector(newdata %*% coefs))
+  }
   return(as.vector(x$fitted_values))
 }

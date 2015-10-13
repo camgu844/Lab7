@@ -150,6 +150,7 @@ testset  &lt;-<span class="st"> </span>BostonHousing[-inTraining,]
                         <span class="dt">class =</span> <span class="kw">c</span>(<span class="st">&quot;numeric&quot;</span>),
                         <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;Lambda&quot;</span>)),
   <span class="dt">fit=</span>function(x, y, wts, param, lev, last, weights, classProbs, ...){
+    <span class="kw">print</span>(y)
     <span class="kw">return</span> (<span class="kw">ridgereg</span>(y~x, <span class="dt">data=</span><span class="ot">NULL</span>, param))
   },
   <span class="dt">predict=</span>function(modelFit, newdata, <span class="dt">preProc =</span> <span class="ot">NULL</span>, <span class="dt">submodels =</span> <span class="ot">NULL</span>){
