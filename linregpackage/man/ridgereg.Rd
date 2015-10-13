@@ -4,7 +4,7 @@
 \alias{ridgereg}
 \title{A function for ridge regression.}
 \usage{
-ridgereg(formula, data)
+ridgereg(formula, data, lambda)
 }
 \arguments{
 \item{formula}{A formula implies the model (e.g. y ~ x)}

@@ -1,5 +1,5 @@
 ---
-title: "Workflow for linreg"
+title: "Workflow for ridgereg"
 author: "Trung and Camilia"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -22,26 +22,14 @@ head(iris, 5)
 ### 2. Create formula and fitting the model
 ```{r}
 formula = Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width
-m = linreg(formula, iris)
+m = ridgereg(formula, iris, lambda=0.1)
 summary(m)
 ```
 The model is fitted and we can see the summary about coefficients.
 
-### 3. Plot the model
-```{r fig.width = 6, fig.height = 3, fig.align='center'}
-plot(m)
-```
-
-### 4. Inspect the residuals, and predictions
-
-First the residuals:
-
-```{r}
-summary(residuals(m))
-```
-
-Next, the predictions:
-
-```{r}
-summary(predict(m))
+### 3. Plot the prediction vs true value
+```{r fig.width = 6, fig.height = 5, fig.align='center'}
+par(mfrow=c(2,1))
+plot(predict(m),type='l',col='blue',main="Prediction")
+plot(iris$Sepal.Length,type='l', col='red',main="Actual value")
 ```

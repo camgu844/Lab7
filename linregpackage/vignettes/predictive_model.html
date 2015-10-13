@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Trung and Camilia" />
+
+<meta name="date" content="2015-10-13" />
+
+<title>Predictive model using ridgereg</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">Predictive model using ridgereg</h1>
+<h4 class="author"><em>Trung and Camilia</em></h4>
+<h4 class="date"><em>2015-10-13</em></h4>
+</div>
+
+
+<div id="load-library-and-dataset" class="section level3">
+<h3>1. Load library and dataset</h3>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(linregpackage)
+<span class="kw">library</span>(mlbench)
+<span class="kw">library</span>(caret)</code></pre>
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(BostonHousing)
+<span class="kw">attach</span>(BostonHousing)
+<span class="kw">head</span>(BostonHousing, <span class="dv">5</span>)</code></pre>
+<pre><code>##      crim zn indus chas   nox    rm  age    dis rad tax ptratio      b
+## 1 0.00632 18  2.31    0 0.538 6.575 65.2 4.0900   1 296    15.3 396.90
+## 2 0.02731  0  7.07    0 0.469 6.421 78.9 4.9671   2 242    17.8 396.90
+## 3 0.02729  0  7.07    0 0.469 7.185 61.1 4.9671   2 242    17.8 392.83
+## 4 0.03237  0  2.18    0 0.458 6.998 45.8 6.0622   3 222    18.7 394.63
+## 5 0.06905  0  2.18    0 0.458 7.147 54.2 6.0622   3 222    18.7 396.90
+##   lstat medv
+## 1  4.98 24.0
+## 2  9.14 21.6
+## 3  4.03 34.7
+## 4  2.94 33.4
+## 5  5.33 36.2</code></pre>
+<p>Then, we split the dataset:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Rule of thumb: 60% for training, 40% for testing</span>
+index &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">nrow</span>(BostonHousing)
+<span class="kw">set.seed</span>(<span class="dv">12082518</span>)
+inTraining &lt;-<span class="st"> </span><span class="kw">createDataPartition</span>(BostonHousing$medv, <span class="dt">p =</span> .<span class="dv">60</span>, <span class="dt">list =</span> <span class="ot">FALSE</span>)
+trainset &lt;-<span class="st"> </span>BostonHousing[ inTraining,]
+testset  &lt;-<span class="st"> </span>BostonHousing[-inTraining,]
+<span class="kw">print</span>(<span class="kw">nrow</span>(trainset))</code></pre>
+<pre><code>## [1] 306</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">nrow</span>(testset))</code></pre>
+<pre><code>## [1] 200</code></pre>
+</div>
+<div id="fit-a-linear-regression-model-and-a-fit-a-linear-regression-model-with-forward-selection-of-covariates-on-the-training-dataset." class="section level3">
+<h3>2. Fit a linear regression model and a fit a linear regression model with forward selection of covariates on the training dataset.</h3>
+<p>First simple overfitted linear model:</p>
+<pre class="sourceCode r"><code class="sourceCode r">lmfit &lt;-<span class="st"> </span><span class="kw">train</span>(medv ~<span class="st"> </span>., <span class="dt">data =</span> trainset, 
+               <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>)
+<span class="kw">print</span>(lmfit)</code></pre>
+<pre><code>## Linear Regression 
+## 
+## 306 samples
+##  13 predictor
+## 
+## No pre-processing
+## Resampling: Bootstrapped (25 reps) 
+## Summary of sample sizes: 306, 306, 306, 306, 306, 306, ... 
+## Resampling results
+## 
+##   RMSE      Rsquared   RMSE SD    Rsquared SD
+##   5.025099  0.7041593  0.5940222  0.0792598  
+## 
+## </code></pre>
+<p>Next, the model using forward selection:</p>
+<pre class="sourceCode r"><code class="sourceCode r">lmforward =<span class="st"> </span><span class="kw">train</span>(medv ~<span class="st"> </span>., <span class="dt">data =</span> trainset,
+                 <span class="dt">method =</span> <span class="st">&quot;leapForward&quot;</span>)</code></pre>
+<pre><code>## Loading required package: leaps</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(lmforward)</code></pre>
+<pre><code>## Linear Regression with Forward Selection 
+## 
+## 306 samples
+##  13 predictor
+## 
+## No pre-processing
+## Resampling: Bootstrapped (25 reps) 
+## Summary of sample sizes: 306, 306, 306, 306, 306, 306, ... 
+## Resampling results across tuning parameters:
+## 
+##   nvmax  RMSE      Rsquared   RMSE SD    Rsquared SD
+##   2      5.381918  0.6633700  0.6216038  0.06615297 
+##   3      5.185657  0.6861530  0.6375208  0.06098075 
+##   4      5.097917  0.6954383  0.6072429  0.06063160 
+## 
+## RMSE was used to select the optimal model using  the smallest value.
+## The final value used for the model was nvmax = 4.</code></pre>
+<p>We can see that with <em>lmfit</em> the model provide better fitting, but with high number of parameters, this model will have low generalization ability and overfitting training data.</p>
+<p>Conversely, <em>lmforward</em> selected 4 parameters give reasonable good RMSE, which is <strong>5.097917</strong>. From this point of view, 9 more parameters included in <em>lmfit</em> may only explained <strong>0.072</strong> RMSE value.</p>
+<p>We can calculate Adjusted <span class="math">\(R^2\)</span> to make selection between 2 model, given by formula: <span class="math">\[
+  AdjR^2 = 1-\frac{SS_{residuals}/(n-K)}{SS_{total}/(n-1)}
+\]</span> Which clearly show that <em>lmforward</em> is better choice.</p>
+</div>
+<div id="fit-a-ridge-regression-model-using-your-ridgereg-function-to-the-training-dataset-for-diffrent-values-of-lambda." class="section level3">
+<h3>3. Fit a ridge regression model using your ridgereg() function to the training dataset for diffrent values of <span class="math">\(\lambda\)</span>.</h3>
+<p>Hello</p>
+<pre class="sourceCode r"><code class="sourceCode r">modelinfo =<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">library=</span><span class="kw">c</span>(<span class="st">'linregpackage'</span>),
+  <span class="dt">type=</span><span class="kw">c</span>(<span class="st">&quot;Regression&quot;</span>),
+  <span class="dt">parameters=</span><span class="kw">data.frame</span>(<span class="dt">parameter =</span> <span class="kw">c</span>(<span class="st">&quot;lambda&quot;</span>),
+                        <span class="dt">class =</span> <span class="kw">c</span>(<span class="st">&quot;numeric&quot;</span>),
+                        <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;Lambda&quot;</span>)),
+  <span class="dt">fit=</span>function(x, y, wts, param, lev, last, weights, classProbs, ...){
+    <span class="kw">return</span> (<span class="kw">ridgereg</span>(y~x, <span class="dt">data=</span><span class="ot">NULL</span>, param))
+  },
+  <span class="dt">predict=</span>function(modelFit, newdata, <span class="dt">preProc =</span> <span class="ot">NULL</span>, <span class="dt">submodels =</span> <span class="ot">NULL</span>){
+    <span class="kw">return</span> (<span class="kw">predict</span>(modelFit, newdata))
+  },
+  <span class="dt">grid=</span>function(x, y, <span class="dt">len =</span> <span class="ot">NULL</span>, <span class="dt">search =</span> <span class="st">&quot;grid&quot;</span>){
+    <span class="kw">return</span> (<span class="kw">data.frame</span>(<span class="dt">lambda=</span><span class="dv">1</span>:<span class="dv">10</span>/<span class="dv">10</span>))
+  },
+  <span class="dt">prob=</span><span class="ot">NULL</span>
+)
+<span class="co"># lmridge = train(medv ~ ., data = trainset, method = modelinfo)</span>
+<span class="co"># m = ridgereg(formula, iris, lambda=0.1)</span>
+<span class="co"># par(mfrow=c(2,1))</span>
+<span class="co"># plot(predict(m),type='l',col='blue',main=&quot;Prediction&quot;)</span>
+<span class="co"># plot(iris$Sepal.Length,type='l', col='red',main=&quot;Actual value&quot;)</span></code></pre>
+</div>
+<div id="find-the-best-hyperparameter-value-for-lambda-using-10-fold-cross-validation-on-the-training-set." class="section level3">
+<h3>4. Find the best hyperparameter value for <span class="math">\(\lambda\)</span> using 10-fold cross-validation on the training set.</h3>
+<pre class="sourceCode r"><code class="sourceCode r">fitControl &lt;-<span class="st"> </span><span class="kw">trainControl</span>(## 10-fold CV
+                           <span class="dt">method =</span> <span class="st">&quot;repeatedcv&quot;</span>,
+                           <span class="dt">number =</span> <span class="dv">10</span>,
+                           ## repeated ten times
+                           <span class="dt">repeats =</span> <span class="dv">10</span>)</code></pre>
+</div>
+<div id="conclusion" class="section level3">
+<h3>5. Conclusion</h3>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

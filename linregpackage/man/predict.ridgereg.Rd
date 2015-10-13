@@ -4,7 +4,7 @@
 \alias{predict.ridgereg}
 \title{A method that returns the predicted values y.}
 \usage{
-\method{predict}{ridgereg}(x)
+\method{predict}{ridgereg}(x, newdata = NULL)
 }
 \arguments{
 \item{x}{ridgereg object}
