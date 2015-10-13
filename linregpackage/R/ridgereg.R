@@ -17,11 +17,11 @@ ridgereg <- function(formula, data, lambda) {
   #dependent variable y
   y_namn <- all.vars(formula, max.names=1L)
   y <- model.frame(formula, data)[[y_namn]] 
-  
+
   #number of covariates
   n_cov <- length(colnames(X))
 
-  #normalizes the covariates
+    #normalizes the covariates
   Xnorm <- matrix(nrow=length(y), ncol=n_cov)
   colnames(Xnorm) <- colnames(X)
   Xnorm[,1] <- 1
@@ -30,15 +30,14 @@ ridgereg <- function(formula, data, lambda) {
   }
 
   #calculates regression coefficients:
-  del_a <- (t(X) %*% X) + (lambda * diag(n_cov))
-  reg_coef <- solve(del_a) %*% t(X) %*% y
+  reg_coef <- solve(t(X)%*%X + diag(lambda,n_cov,n_cov)) %*% t(X) %*% y
 
   #calculates the fitted values:
   fitted_values <- X %*% reg_coef
 
   ret <- list()
   class(ret) <- "ridgereg"
-  ret$reg_coef <- t(reg_coef)
+  ret$reg_coef <- as.vector(reg_coef)
   ret$fitted_values <- fitted_values
   ret$formula <- formula
   ret$data <- data

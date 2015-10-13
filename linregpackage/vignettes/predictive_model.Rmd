@@ -57,7 +57,7 @@ Which clearly show that _lmforward_ is better choice.
 ### 3. Fit a ridge regression model using your ridgereg() function to the training dataset for diffrent values of $\lambda$.
 
 Hello
-```{r fig.width = 6, fig.height = 5, fig.align='center'}
+```{r}
 modelinfo = list(
   library=c('linregpackage'),
   type=c("Regression"),
@@ -65,31 +65,52 @@ modelinfo = list(
                         class = c("numeric"),
                         label = c("Lambda")),
   fit=function(x, y, wts, param, lev, last, weights, classProbs, ...){
-    return (ridgereg(y~x, data=NULL, param))
+    fitted= (ridgereg(y~x, data=NULL, param))
+    return(fitted)
   },
   predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
-    return (predict(modelFit, newdata))
+    predictions = predict(modelFit, newdata)
+    return(predictions)
   },
   grid=function(x, y, len = NULL, search = "grid"){
-    return (data.frame(lambda=1:10/10))
+    return (data.frame(lambda=seq(0,1000,50)/1000))
   },
   prob=NULL
 )
-lmridge = train(medv ~ ., data = trainset, method = modelinfo)
-# m = ridgereg(formula, iris, lambda=0.1)
-# par(mfrow=c(2,1))
-# plot(predict(m),type='l',col='blue',main="Prediction")
-# plot(iris$Sepal.Length,type='l', col='red',main="Actual value")
-```
-
-### 4. Find the best hyperparameter value for $\lambda$ using 10-fold cross-validation on the training set. 
-
-```{r}
 fitControl <- trainControl(## 10-fold CV
                            method = "repeatedcv",
                            number = 10,
                            ## repeated ten times
                            repeats = 10)
-```
+lmridge = train(medv ~ ., data = trainset, 
+                method = modelinfo,
+                trControl=fitControl)
+print(lmridge)
 
-### 5. Conclusion
+```
+Without crossvalidation, the model with $\lambda=0$ will give the best RMSE, however, _caret_ with a strategy of tuning parameter selects $\lambda=0.05$ as the best option.
+
+It is reasonable value, since too big $\lambda$ can make the model underfit, and smaller $\lambda$ will overfit the training data.
+
+### 4. Comparison of 3 models 
+
+```{r fig.width = 6, fig.height = 7, fig.align='center'}
+pfit = predict(lmfit, testset)
+pforward = predict(lmforward, testset)
+pridge = predict(lmridge, testset)
+actual = testset$medv
+par(mfrow=c(4,1))
+plot(pfit,type='l',col='blue',main="LMFIT Prediction")
+plot(pforward,type='l',col='blue',main="LMFORWARD Prediction")
+plot(pridge,type='l',col='blue',main="LMRIDGE Prediction")
+plot(actual, type='l', col='red',main="Actual value")
+```
+By visualization, we can see all 3 models provide pretty similar prediction and the line shape is identical to the actual shape.
+
+Conversele, the RMSE can give more clearly results:
+```{r}
+print(paste('RMSE lmfit:', sqrt(sum((actual-pfit)^2)/length(actual)) ))
+print(paste('RMSE lmforward:', sqrt(sum((actual-pforward)^2)/length(actual)) ))
+print(paste('RMSE ridge:', sqrt(sum((actual-pridge)^2)/length(actual)) ))
+```
+From this point of view, _lmfit_, a model with full 14 parameters give the best fit. The result seem to be inplausible, since a big model gives very poor generalization. However, the result on testset can be considered as reliable and this is a **helpful** model.
