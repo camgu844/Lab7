@@ -6,7 +6,7 @@
 #' @examples
 #' formula <- Sepal.Length ~ Sepal.Width + Petal.Length
 #' data <- iris
-#' ret <- ridgereg(Sepal.Length ~ Sepal.Width + Petal.Length, iris)
+#' ret <- ridgereg(Sepal.Length ~ Sepal.Width + Petal.Length, iris, 0)
 
 
 ridgereg <- function(formula, data, lambda) {
