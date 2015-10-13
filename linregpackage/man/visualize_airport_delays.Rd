@@ -17,5 +17,6 @@ A function that creates a plot showing mean delay of flights.
 #library(ggmap)
 #library(dplyr)
 #library(nycflights13)
+visualize_airport_delays()
 }
 
