@@ -1,0 +1,95 @@
+---
+title: "Predictive model using ridgereg"
+author: "Trung and Camilia"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+### 1. Load library and dataset
+```{r}
+library(linregpackage)
+library(mlbench)
+library(caret)
+
+data(BostonHousing)
+attach(BostonHousing)
+head(BostonHousing, 5)
+```
+Then, we split the dataset:
+```{r}
+# Rule of thumb: 60% for training, 40% for testing
+index <- 1:nrow(BostonHousing)
+set.seed(12082518)
+inTraining <- createDataPartition(BostonHousing$medv, p = .60, list = FALSE)
+trainset <- BostonHousing[ inTraining,]
+testset  <- BostonHousing[-inTraining,]
+print(nrow(trainset))
+print(nrow(testset))
+```
+
+### 2. Fit a linear regression model and a fit a linear regression model with forward selection of covariates on the training dataset.
+First simple overfitted linear model:
+```{r}
+lmfit <- train(medv ~ ., data = trainset, 
+               method = "lm")
+print(lmfit)
+```
+Next, the model using forward selection:
+```{r}
+lmforward = train(medv ~ ., data = trainset,
+                 method = "leapForward")
+print(lmforward)
+```
+We can see that with _lmfit_ the model provide better fitting, but with high number of parameters, this model will have low generalization ability and overfitting training data. 
+
+Conversely, _lmforward_ selected 4 parameters give reasonable good RMSE, which is **5.097917**. From this point of view, 9 more parameters included in _lmfit_ may only explained **0.072** RMSE value.
+
+We can calculate Adjusted $R^2$ to make selection between 2 model, given by formula:
+\[
+  AdjR^2 = 1-\frac{SS_{residuals}/(n-K)}{SS_{total}/(n-1)}
+\]
+Which clearly show that _lmforward_ is better choice.
+
+### 3. Fit a ridge regression model using your ridgereg() function to the training dataset for diffrent values of $\lambda$.
+
+Hello
+```{r fig.width = 6, fig.height = 5, fig.align='center'}
+modelinfo = list(
+  library=c('linregpackage'),
+  type=c("Regression"),
+  parameters=data.frame(parameter = c("lambda"),
+                        class = c("numeric"),
+                        label = c("Lambda")),
+  fit=function(x, y, wts, param, lev, last, weights, classProbs, ...){
+    return (ridgereg(y~x, data=NULL, param))
+  },
+  predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
+    return (predict(modelFit, newdata))
+  },
+  grid=function(x, y, len = NULL, search = "grid"){
+    return (data.frame(lambda=1:10/10))
+  },
+  prob=NULL
+)
+lmridge = train(medv ~ ., data = trainset, method = modelinfo)
+# m = ridgereg(formula, iris, lambda=0.1)
+# par(mfrow=c(2,1))
+# plot(predict(m),type='l',col='blue',main="Prediction")
+# plot(iris$Sepal.Length,type='l', col='red',main="Actual value")
+```
+
+### 4. Find the best hyperparameter value for $\lambda$ using 10-fold cross-validation on the training set. 
+
+```{r}
+fitControl <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated ten times
+                           repeats = 10)
+```
+
+### 5. Conclusion

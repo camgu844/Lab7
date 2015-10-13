@@ -7,5 +7,12 @@ Author: Camilla Skoglund and TrungNT
 Maintainer: Camilla Skoglund <camgu844@student.liu.se>
 Description: This package includes the code for a multiple linear regression model, and for ridge regression.
 License: GPL-2
-Suggests: ggplot2, testthat, knitr, rmarkdown
+Suggests: ggplot2,
+	testthat,
+	knitr,
+	rmarkdown
 VignetteBuilder: knitr
+Imports: dplyr,
+	ggplot2,
+	nycflights13,
+	ggmap
