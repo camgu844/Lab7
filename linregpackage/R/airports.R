@@ -5,6 +5,7 @@
 #' #library(ggmap)
 #' #library(dplyr)
 #' #library(nycflights13)
+#' visualize_airport_delays()
 
 visualize_airport_delays <- function () {
 
