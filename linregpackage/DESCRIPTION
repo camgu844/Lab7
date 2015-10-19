@@ -10,9 +10,14 @@ License: GPL-2
 Suggests: ggplot2,
 	testthat,
 	knitr,
-	rmarkdown
+	rmarkdown,
+	dplyr,
+	nycflights13,
+	ggmap,
+	leaps
 VignetteBuilder: knitr
 Imports: dplyr,
 	ggplot2,
 	nycflights13,
-	ggmap
+	ggmap,
+	leaps
