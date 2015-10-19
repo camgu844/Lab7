@@ -1,10 +1,10 @@
 #' A function that creates a plot showing mean delay of flights.
 #' @param no arguments
 #' @examples
-#' #library(ggplot2)
-#' #library(ggmap)
-#' #library(dplyr)
-#' #library(nycflights13)
+#' library(ggplot2)
+#' library(ggmap)
+#' library(dplyr)
+#' library(nycflights13)
 #' visualize_airport_delays()
 
 visualize_airport_delays <- function () {
